@@ -1,4 +1,7 @@
 class ApplicationController < ActionController::Base
+  include Response
+  include ExceptionHandler
+
   before_action :ensure_json
 
   def ensure_json
