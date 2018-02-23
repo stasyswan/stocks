@@ -54,4 +54,6 @@ Rails.application.configure do
 
   config.logger = Logger.new(STDOUT)
 
+  config.assets.quiet = true
+
 end

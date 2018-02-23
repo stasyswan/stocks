@@ -129,16 +129,64 @@ RSpec.describe StocksController, type: :controller do
         expect(json["market_price_attributes"]["value_cents"]).to eq(19.39)
       end
     end
-  end
 
-  describe "DELETE /stocks/:id" do
-    let!(:stock){ create(:stock) }
+    context "unexisted record" do
 
-    before { delete :destroy, params: { id: 1 }}
+      params = { id: 1,
+                 stock: { name: "Valid stock",
+                          bearer_attributes: FactoryBot.attributes_for(:bearer),
+                          market_price_attributes: FactoryBot.attributes_for(:market_price) }}
 
-    it "should soft-delete a stock" do
-      expect(json["removed"]).to be true
+      before { patch :update, params: params }
+
+      it "should return 404 and fail to save" do
+        expect(json["error"]).to eq("Couldn't find Stock with id: 1")
+      end
+    end
+
+    context "deleted record" do
+      let!(:stock_deleted){ create(:stock_deleted) }
+
+      params = { id: 1,
+                 stock: { name: "Valid stock",
+                          bearer_attributes: FactoryBot.attributes_for(:bearer),
+                          market_price_attributes: FactoryBot.attributes_for(:market_price) }}
+
+      before { patch :update, params: params }
+
+      it "should return 404 and fail to save" do
+        expect(json["error"]).to eq("Couldn't find Stock with id: 1")
+      end
     end
   end
 
+  describe "DELETE /stocks/:id" do
+    context "with valid data" do
+      let!(:stock){ create(:stock) }
+
+      before { delete :destroy, params: { id: 1 }}
+
+      it "should soft-delete a stock" do
+        expect(json["removed"]).to be true
+      end
+    end
+
+    context "unexisted record" do
+      before { delete :destroy, params: { id: 1 }}
+
+      it "should return 404 and fail to save" do
+        expect(json["error"]).to eq("Couldn't find Stock with id: 1")
+      end
+    end
+
+    context "deleted record" do
+      let!(:stock_deleted){ create(:stock_deleted) }
+
+      before { delete :destroy, params: { id: 1 }}
+
+      it "should return 404 and fail to save" do
+        expect(json["error"]).to eq("Couldn't find Stock with id: 1")
+      end
+    end
+  end
 end
