@@ -21,7 +21,7 @@ ActiveRecord::Schema.define(version: 20180220120034) do
 
   create_table "market_prices", force: :cascade do |t|
     t.string   "currency",    null: false
-    t.integer  "value_cents", null: false
+    t.float    "value_cents", null: false
     t.datetime "created_at",  null: false
     t.datetime "updated_at",  null: false
     t.index ["currency", "value_cents"], name: "index_market_prices_on_currency_and_value_cents", unique: true

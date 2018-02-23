@@ -41,7 +41,7 @@ gem 'annotate'
 group :development, :test do
   gem 'pry'
   gem 'pry-nav'
-  gem 'rspec-rails'
+  gem 'rspec-rails', '~> 3.5'
 end
 
 group :development do
@@ -56,7 +56,8 @@ group :development do
 end
 
 group :test do
-  gem 'factory_girl_rails'
+  gem 'rails-controller-testing'
+  gem 'factory_bot_rails', "~> 4.0"
   gem 'shoulda-matchers', '~> 3.1'
   gem 'faker'
   gem 'database_cleaner'

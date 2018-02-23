@@ -12,12 +12,18 @@
 #
 
 class Stock < ApplicationRecord
-  belongs_to :market_price
-  belongs_to :bearer
+  belongs_to :market_price, optional: true
+  belongs_to :bearer, optional: true
 
-  validates :name, presence: { message: "for Stock can't be empty" }
-  validates :name, uniqueness: { message: "for Stock has already been taken" }
-  validates :name, length: { maximum: 255, message: "for Stock is too long. Maximum 255 chars" }
+  validates :bearer, :market_price, presence: { message: "is invalid" }
+
+  validates :name, presence: { message: "can't be blank" }
+  validates :name, format: { without: /invalid/, message: "is invalid"  }
+  validates :name, uniqueness: { message: "has already been taken" }
+  validates :name, length: { maximum: 255, message: "is too long. Maximum 255 chars" }
+
 
   scope :active, -> { where(removed: false) }
+
+  accepts_nested_attributes_for :bearer, :market_price
 end

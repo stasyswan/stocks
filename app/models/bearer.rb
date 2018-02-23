@@ -9,10 +9,10 @@
 #
 
 class Bearer < ApplicationRecord
-  has_many :stocks
+  has_many :stocks, dependent: :delete_all
   has_many :market_prices, through: :stocks
 
-  validates :name, presence: { message: "for Bearer can't be empty" }
-  validates :name, uniqueness: { message: "for Bearer has already been taken" }
-  validates :name, length: { maximum: 255, message: "for Bearer is too long. Maximum 255 chars" }
+  validates :name, presence: { message: "can't be blank" }
+  validates :name, uniqueness: { message: "has already been taken" }
+  validates :name, length: { maximum: 255, message: "is too long. Maximum 255 chars" }
 end
