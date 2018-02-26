@@ -42,11 +42,11 @@ RSpec.describe StocksController, type: :controller do
     context "with invalid data" do
       it "should return 422 and fail to save" do
 
-        params = { stock: {
+        params = {
             name: "invalid",
             bearer: "invalid",
             value: 19.39,
-            currency: "EUR" }}
+            currency: "EUR" }
 
         post :create, params: params
 
