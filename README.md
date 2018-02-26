@@ -25,3 +25,140 @@ Error responses should be detailed in a way that they explain what exactly is mi
 Reflect the explained logic and endpoints in rspec tests.
 
 Bonne chance and feel free to ask questions when you get totally stuck.
+
+
+
+
+**There are such endpoints:**
+
+_Create stock:_ POST /api/v1/stocks
+
+```$xslt
+{
+	"stock": {
+		"name": "Stock name", 
+		"bearer_attributes":{
+		  "name":"Me"
+		}, 
+		"market_price_attributes": {
+		  "value_cents": 9.39, 
+		  "currency": "EUR" 
+		}
+	}
+}
+```
+_Responce:_ HTTP/1.1 200 OK
+```
+{
+	"id": 1,
+	"name": "Stock name",
+	"bearer_id": 1,
+	"market_price_id": 1,
+	"removed": false,
+	"created_at": "2018-02-26T10:42:54.954Z",
+	"updated_at": "2018-02-26T10:42:54.954Z"
+}
+```
+
+_Create invalid stock:_ POST /api/v1/stocks
+
+``` 
+{
+	"name": "invalid", 
+	"bearer_attributes": "invalid", 
+	"value": 19.39, 
+	"currency": "EUR" 
+}
+```
+Responce:_  HTTP/1.1 422 Unprocessable Entity
+```
+{
+	"error": {
+		"bearer": [
+			"is invalid"
+		],
+		"market_price": [
+			"is invalid"
+		],
+		"name": [
+			"is invalid"
+		]
+	}
+}
+```
+
+
+_Update stock:_ PUT /api/v1/stocks/1
+
+```$xslt
+{
+	"stock": {
+		"name": "Stock updated name",
+		"bearer_attributes": {
+			"name": "Me"
+		},
+		"market_price_attributes":{
+			"currency": "EUR",
+			"value_cents": 4300.00
+		}
+	}
+}
+```
+_Responce:_ HTTP/1.1 200 OK
+```
+{
+	"name": "Stock updated name",
+	"bearer_attributes": {
+		"name": "Me"
+	},
+	"market_price_attributes": {
+		"currency": "EUR",
+		"value_cents": 4300.0
+	}
+}
+```
+
+_Get all stocks:_ GET /api/v1/stocks
+
+_Responce:_ HTTP/1.1 200 OK
+```
+[
+	{
+		"id": 1,
+		"name": "Stock updated name",
+		"bearer_id": 1,
+		"market_price_id": 2,
+		"removed": false,
+		"created_at": "2018-02-26T09:44:59.085Z",
+		"updated_at": "2018-02-26T11:02:32.449Z",
+		"bearer": {
+			"id": 1,
+			"name": "Me",
+			"created_at": "2018-02-26T11:02:32.432Z",
+			"updated_at": "2018-02-26T11:02:32.432Z"
+		},
+		"market_price": {
+			"id": 2,
+			"currency": "EUR",
+			"value_cents": 4300.0,
+			"created_at": "2018-02-26T11:02:32.438Z",
+			"updated_at": "2018-02-26T11:02:32.438Z"
+		}
+	}
+]
+```
+
+_Delete stock:_ DELETE /api/v1/stocks/1
+
+_Responce:_ HTTP/1.1 200 OK
+```
+{
+	"removed": true,
+	"id": 1,
+	"name": "Stock updated name",
+	"bearer_id": 1,
+	"market_price_id": 2,
+	"created_at": "2018-02-26T09:44:59.085Z",
+	"updated_at": "2018-02-26T11:08:38.629Z"
+}
+```

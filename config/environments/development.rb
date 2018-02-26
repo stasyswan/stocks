@@ -52,8 +52,7 @@ Rails.application.configure do
   # routes, locales, etc. This feature depends on the listen gem.
   config.file_watcher = ActiveSupport::EventedFileUpdateChecker
 
-  config.logger = Logger.new(STDOUT)
-
   config.assets.quiet = true
 
+  config.action_controller.action_on_unpermitted_parameters = :raise
 end
