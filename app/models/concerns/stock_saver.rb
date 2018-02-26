@@ -1,7 +1,7 @@
 class StockSaver
   include ActiveModel::Model
 
-  attr_accessor :id, :name, :bearer_attributes, :market_price_attributes
+  attr_accessor :name, :bearer_attributes, :market_price_attributes
 
   def update stock
     ActiveRecord::Base.transaction do

@@ -12,7 +12,8 @@ class Bearer < ApplicationRecord
   has_many :stocks, dependent: :delete_all
   has_many :market_prices, through: :stocks
 
-  validates :name, presence: { message: "can't be blank" }
-  validates :name, uniqueness: { message: "has already been taken" }
-  validates :name, length: { maximum: 255, message: "is too long. Maximum 255 chars" }
+  validates :name,
+            presence: true,
+            uniqueness: true,
+            length: { maximum: 255 }
 end

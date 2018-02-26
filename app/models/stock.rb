@@ -17,11 +17,11 @@ class Stock < ApplicationRecord
 
   validates :bearer, :market_price, presence: { message: "is invalid" }
 
-  validates :name, presence: { message: "can't be blank" }
-  validates :name, format: { without: /invalid/, message: "is invalid"  }
-  validates :name, uniqueness: { message: "has already been taken" }
-  validates :name, length: { maximum: 255, message: "is too long. Maximum 255 chars" }
-
+  validates :name,
+            presence: true,
+            uniqueness: true,
+            format: { without: /invalid/, message: "is invalid"  },
+            length: { maximum: 255 }
 
   scope :active, -> { where(removed: false) }
 

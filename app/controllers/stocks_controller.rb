@@ -2,7 +2,9 @@ class StocksController < ApplicationController
   before_action :set_stock, only: [:update, :destroy]
 
   def index
-    @stocks = Stock.active.includes(:bearer).includes(:market_price).to_json(include: [:bearer, :market_price])
+    @stocks = Stock.active
+                  .includes(:bearer, :market_price)
+                  .to_json(include: [:bearer, :market_price])
 
     json_response @stocks
   end
@@ -14,7 +16,7 @@ class StocksController < ApplicationController
   end
 
   def update
-    @stock_saver = StockSaver.new stock_params.merge(id: params[:id])
+    @stock_saver = StockSaver.new stock_params
     @stock_saver.update @stock
 
     json_response @stock_saver

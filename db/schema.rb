@@ -36,6 +36,7 @@ ActiveRecord::Schema.define(version: 20180220120034) do
     t.datetime "updated_at",                      null: false
     t.index ["bearer_id"], name: "index_stocks_on_bearer_id"
     t.index ["market_price_id"], name: "index_stocks_on_market_price_id"
+    t.index ["name"], name: "index_stocks_on_name", unique: true
   end
 
 end

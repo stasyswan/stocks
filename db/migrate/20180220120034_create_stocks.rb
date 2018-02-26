@@ -6,6 +6,8 @@ class CreateStocks < ActiveRecord::Migration[5.0]
       t.references :market_price, null: false
       t.boolean :removed, default: false
       t.timestamps
+
+      t.index :name, unique: true
     end
   end
 end
