@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 source 'https://rubygems.org'
 
 git_source(:github) do |repo_name|
@@ -34,8 +36,8 @@ gem 'jbuilder', '~> 2.5'
 # Use Capistrano for deployment
 # gem 'capistrano-rails', group: :development
 
-gem 'money-rails'
 gem 'annotate'
+gem 'money-rails'
 
 group :development, :test do
   gem 'pry'
@@ -45,21 +47,25 @@ end
 
 group :development do
   # Access an IRB console on exception pages or by using <%= console %> anywhere in the code.
-  gem 'web-console', '>= 3.3.0'
   gem 'listen', '~> 3.0.5'
+  gem 'web-console', '>= 3.3.0'
   # Spring speeds up development by keeping your application running in the background. Read more: https://github.com/rails/spring
+  gem 'annotate_models'
   gem 'spring'
   gem 'spring-watcher-listen', '~> 2.0.0'
-  gem 'annotate_models'
+
+  gem 'rubocop', '~> 0.77.0', require: false # Static code analyzer, based on the community Ruby style guide
+  gem 'rubocop-rspec'
 end
 
 group :test do
-  gem 'rails-controller-testing'
-  gem 'factory_bot_rails', "~> 4.0"
-  gem 'shoulda-matchers', '~> 3.1'
   gem 'database_cleaner'
+  gem 'factory_bot_rails', "~> 4.0"
+  gem 'rails-controller-testing'
+  gem 'shoulda-matchers', '~> 3.1'
   gem 'simplecov', require: false
 end
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
 # gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
+

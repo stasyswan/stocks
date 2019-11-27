@@ -1,0 +1,92 @@
+inherit_from: .rubocop_todo.yml
+
+require: rubocop-rspec
+
+AllCops:
+  TargetRubyVersion: 2.5
+  Exclude:
+    - 'db/migrate/**/*'
+    - 'db/schema.rb'
+    - 'db/seeds.rb'
+    - 'config/**/*'
+    - 'bin/**/*'
+    - 'node_modules/**/*'
+    - 'log'
+    - 'public/**/*'
+    - 'tmp/**/*'
+    - 'Vagrantfile'
+    - 'test/test_helper.rb'
+
+Rails:
+  Enabled: true
+Layout/SpaceBeforeFirstArg:
+  Enabled: false
+Style/RaiseArgs:
+  Enabled: false
+Style/SignalException:
+  Enabled: false
+Style/BlockComments:
+  Enabled: false
+Style/GuardClause:
+  Enabled: false
+Style/GlobalVars:
+  Enabled: true
+  AllowedVariables: [$redis]
+Documentation:
+  Enabled: false
+Metrics/MethodLength:
+  Enabled: false
+Metrics/ClassLength:
+  Enabled: false
+Style/StringLiterals:
+  Enabled: false
+Style/TrailingCommaInArrayLiteral:
+  EnforcedStyleForMultiline: no_comma
+Layout/FirstHashElementIndentation:
+  Enabled: false
+Layout/FirstArrayElementIndentation:
+  Enabled: false
+Style/StructInheritance:
+  Enabled: false
+Style/Lambda:
+  Enabled: false
+Style/LambdaCall:
+  Enabled: false
+Style/StabbyLambdaParentheses:
+  Enabled: false
+Metrics/LineLength:
+  Max: 120
+Metrics/BlockLength:
+  Enabled: false
+Style/BracesAroundHashParameters:
+  Enabled: false
+Style/FrozenStringLiteralComment:
+  Enabled: true
+RSpec/ExampleLength:
+  Enabled: false
+RSpec/MultipleExpectations:
+  Enabled: false
+RSpec/EmptyExampleGroup:
+  Enabled: false
+Style/MultilineBlockChain:
+  Enabled: false
+Naming/MethodParameterName:
+  Enabled: false
+Naming/MemoizedInstanceVariableName:
+  Enabled: false
+RSpec/HooksBeforeExamples:
+  Enabled: false
+Style/ExpandPathArguments:
+  Enabled: false
+RSpec/ScatteredSetup:
+  Enabled: false
+Layout/TrailingEmptyLines:
+  EnforcedStyle: final_blank_line
+Layout/SpaceInLambdaLiteral:
+  EnforcedStyle: require_space
+Layout/EmptyLinesAroundClassBody:
+  EnforcedStyle: empty_lines_except_namespace
+Layout/EmptyLinesAroundModuleBody:
+  EnforcedStyle: empty_lines_except_namespace
+Metrics/AbcSize:
+  Max: 15

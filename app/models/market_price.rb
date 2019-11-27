@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # == Schema Information
 #
 # Table name: market_prices
@@ -10,6 +12,7 @@
 #
 
 class MarketPrice < ApplicationRecord
+
   has_many :stocks, dependent: :delete_all
   has_many :bearers, through: :stocks
 
@@ -18,4 +21,6 @@ class MarketPrice < ApplicationRecord
             presence: true,
             uniqueness: { scope: :value_cents, message: "combination with value_cents should be uniq" },
             length: { maximum: 255 }
+
 end
+
