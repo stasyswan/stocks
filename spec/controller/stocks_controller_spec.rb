@@ -1,35 +1,39 @@
-require "rails_helper"
+# frozen_string_literal: true
 
-RSpec.describe StocksController, type: :controller do
+require 'rails_helper'
 
-  before :each do
-    request.headers["Content-Type"] = 'application/json'
-  end
+describe StocksController, type: :controller do
+  before { request.headers['Content-Type'] = 'application/json' }
 
-  describe "GET /stocks/" do
-    let!(:stock){ create(:stock) }
-    let!(:stock_2){ create(:stock_2) }
-    let!(:stock_deleted){ create(:stock_deleted) }
+  describe 'GET /stocks' do
+    let!(:stock) { create(:stock) }
+    let!(:stock_2) { create(:stock_2) }
+    let(:stock_deleted) { create(:stock_deleted) }
 
     before { get :index }
 
-    it "should return list with stocks" do
+    it 'returns list with stocks' do
       expect(response).to have_http_status(:ok)
       expect(json.size).to eq(2)
-      expect(response.body).to eq([stock, stock_2].to_json(include: [:bearer, :market_price]))
+      expect(response.body).to eq([stock, stock_2].to_json(include: %i[bearer market_price]))
     end
   end
 
-  describe "POST /stocks/" do
-    context "with valid data" do
-
-      params = { stock: { name: "Valid stock",
-                          bearer_attributes: FactoryBot.attributes_for(:bearer),
-                          market_price_attributes: FactoryBot.attributes_for(:market_price) }}
+  describe 'POST /stocks' do
+    context 'with valid data' do
+      let(:params) do
+        {
+          stock: {
+            name: 'Valid stock',
+            bearer_attributes: FactoryBot.attributes_for(:bearer),
+            market_price_attributes: FactoryBot.attributes_for(:market_price)
+          }
+        }
+      end
 
       before { post :create, params: params }
 
-      it "should return stock and 200 OK" do
+      it 'returns stock and 200 OK' do
         expect(response).to have_http_status(:ok)
         expect(response.body).to eq(Stock.last.to_json)
 
@@ -39,154 +43,189 @@ RSpec.describe StocksController, type: :controller do
       end
     end
 
-    context "with invalid data" do
-      it "should return 422 and fail to save" do
+    context 'with invalid data' do
+      let(:params) do
+        {
+          name: 'invalid',
+          bearer: 'invalid',
+          value: 19.39,
+          currency: 'EUR'
+        }
+      end
 
-        params = {
-            name: "invalid",
-            bearer: "invalid",
-            value: 19.39,
-            currency: "EUR" }
+      before { post :create, params: params }
 
-        post :create, params: params
+      it 'returns 422 and fail to save' do
+        expect(response).to have_http_status(:unprocessable_entity)
 
-        expect(response).to have_http_status(422)
-
-        expect(json).to eq({"error"=>{"bearer"=>["is invalid"],
-                                      "market_price"=>["is invalid"],
-                                      "name"=>["is invalid"]}})
+        expect(json).to eq({ 'error' => { 'bearer' => ['is invalid'],
+                                          'market_price' => ['is invalid'],
+                                          'name' => ['is invalid'] } })
 
         expect(Stock.count).to eq(0)
         expect(Bearer.count).to eq(0)
         expect(MarketPrice.count).to eq(0)
-
       end
     end
   end
 
-  describe "PATCH /stocks/:id" do
-    context "with different bearer" do
-      let!(:stock){ create(:stock) }
+  describe 'PATCH /stocks/:id' do
+    context 'with different bearer' do
+      let(:stock) { create(:stock) }
 
-      params = { id: 1,
-                 stock: { name: "Valid stock",
-                          bearer_attributes: FactoryBot.attributes_for(:bearer_2),
-                          market_price_attributes: FactoryBot.attributes_for(:market_price) }}
+      let(:params) do
+        {
+          id: stock.id,
+          stock: {
+            name: 'Valid stock',
+            bearer_attributes: FactoryBot.attributes_for(:bearer_2),
+            market_price_attributes: FactoryBot.attributes_for(:market_price)
+          }
+        }
+      end
+
       before { patch :update, params: params }
 
-      it "should create new bearer but keep market price" do
+      it 'creates new bearer but keep market price' do
         expect(Stock.count).to eq(1)
         expect(Bearer.count).to eq(2)
         expect(MarketPrice.count).to eq(1)
 
-        expect(json["name"]).to eq("Valid stock")
-        expect(json["bearer_attributes"]["name"]).to eq("Me 2")
-        expect(json["market_price_attributes"]["currency"]).to eq("EUR")
-        expect(json["market_price_attributes"]["value_cents"]).to eq(19.39)
+        expect(json['name']).to eq('Valid stock')
+        expect(json['bearer_attributes']['name']).to eq('Me 2')
+        expect(json['market_price_attributes']['currency']).to eq('EUR')
+        expect(json['market_price_attributes']['value_cents']).to eq(19.39)
       end
     end
 
-    context "with different market price" do
-      let!(:stock){ create(:stock) }
+    context 'with different market price' do
+      let(:stock) { create(:stock) }
 
-      params = { id: 1,
-                 stock: { name: "Valid stock",
-                          bearer_attributes: FactoryBot.attributes_for(:bearer),
-                          market_price_attributes: FactoryBot.attributes_for(:market_price_2) }}
+      let(:params) do
+        {
+          id: stock.id,
+          stock: {
+            name: 'Valid stock',
+            bearer_attributes: FactoryBot.attributes_for(:bearer),
+            market_price_attributes: FactoryBot.attributes_for(:market_price_2)
+          }
+        }
+      end
 
       before { patch :update, params: params }
 
-      it "should create new market price but keep bearer" do
+      it 'creates new market price but keep bearer' do
         expect(Stock.count).to eq(1)
         expect(Bearer.count).to eq(1)
         expect(MarketPrice.count).to eq(2)
 
-        expect(json["name"]).to eq("Valid stock")
-        expect(json["bearer_attributes"]["name"]).to eq("Me")
-        expect(json["market_price_attributes"]["currency"]).to eq("$")
-        expect(json["market_price_attributes"]["value_cents"]).to eq(53.29)
+        expect(json['name']).to eq('Valid stock')
+        expect(json['bearer_attributes']['name']).to eq('Me')
+        expect(json['market_price_attributes']['currency']).to eq('$')
+        expect(json['market_price_attributes']['value_cents']).to eq(53.29)
       end
     end
 
-    context "with existing bearer and market price" do
-      let!(:stock){ create(:stock) }
+    context 'with existing bearer and market price' do
+      let(:stock) { create(:stock) }
 
-      params = { id: 1,
-                 stock: { name: "Valid stock",
-                          bearer_attributes: FactoryBot.attributes_for(:bearer),
-                          market_price_attributes: FactoryBot.attributes_for(:market_price) }}
+      let(:params) do
+        {
+          id: stock.id,
+          stock: {
+            name: 'Valid stock',
+            bearer_attributes: FactoryBot.attributes_for(:bearer),
+            market_price_attributes: FactoryBot.attributes_for(:market_price)
+          }
+        }
+      end
 
       before { patch :update, params: params }
 
-      it "should reference existing bearer and market price to stock" do
+      it 'references existing bearer and market price to stock' do
         expect(Stock.count).to eq(1)
         expect(Bearer.count).to eq(1)
         expect(MarketPrice.count).to eq(1)
 
-        expect(json["name"]).to eq("Valid stock")
-        expect(json["bearer_attributes"]["name"]).to eq("Me")
-        expect(json["market_price_attributes"]["currency"]).to eq("EUR")
-        expect(json["market_price_attributes"]["value_cents"]).to eq(19.39)
+        expect(json['name']).to eq('Valid stock')
+        expect(json['bearer_attributes']['name']).to eq('Me')
+        expect(json['market_price_attributes']['currency']).to eq('EUR')
+        expect(json['market_price_attributes']['value_cents']).to eq(19.39)
       end
     end
 
-    context "unexisted record" do
-
-      params = { id: 1,
-                 stock: { name: "Valid stock",
-                          bearer_attributes: FactoryBot.attributes_for(:bearer),
-                          market_price_attributes: FactoryBot.attributes_for(:market_price) }}
+    context 'when unexisted record' do
+      let(:params) do
+        {
+          id: 1,
+          stock: {
+            name: 'Valid stock',
+            bearer_attributes: FactoryBot.attributes_for(:bearer),
+            market_price_attributes: FactoryBot.attributes_for(:market_price)
+          }
+        }
+      end
 
       before { patch :update, params: params }
 
-      it "should return 404 and fail to save" do
-        expect(json["error"]).to eq("Couldn't find Stock with id: 1")
+      it 'returns 404 and fail to save' do
+        expect(json['error']).to eq("Couldn't find Stock with id: #{params[:id]}")
       end
     end
 
-    context "deleted record" do
-      let!(:stock_deleted){ create(:stock_deleted) }
+    context 'when deleted record' do
+      let(:stock_deleted) { create(:stock_deleted) }
 
-      params = { id: 1,
-                 stock: { name: "Valid stock",
-                          bearer_attributes: FactoryBot.attributes_for(:bearer),
-                          market_price_attributes: FactoryBot.attributes_for(:market_price) }}
+      let(:params) do
+        {
+          id: stock_deleted.id,
+          stock: {
+            name: 'Valid stock',
+            bearer_attributes: FactoryBot.attributes_for(:bearer),
+            market_price_attributes: FactoryBot.attributes_for(:market_price)
+          }
+        }
+      end
 
       before { patch :update, params: params }
 
-      it "should return 404 and fail to save" do
-        expect(json["error"]).to eq("Couldn't find Stock with id: 1")
+      it 'returns 404 and fail to save' do
+        expect(json['error']).to eq("Couldn't find Stock with id: #{params[:id]}")
       end
     end
   end
 
-  describe "DELETE /stocks/:id" do
-    context "with valid data" do
-      let!(:stock){ create(:stock) }
+  describe 'DELETE /stocks/:id' do
+    context 'with valid data' do
+      let(:stock) { create(:stock) }
 
-      before { delete :destroy, params: { id: 1 }}
+      before { delete :destroy, params: { id: stock.id } }
 
-      it "should soft-delete a stock" do
-        expect(json["removed"]).to be true
+      it 'soft-deletes a stock' do
+        expect(json['removed']).to be true
       end
     end
 
-    context "unexisted record" do
-      before { delete :destroy, params: { id: 1 }}
+    context 'when unexisted record' do
+      let(:params) { { id: 1 } }
 
-      it "should return 404 and fail to save" do
-        expect(json["error"]).to eq("Couldn't find Stock with id: 1")
+      before { delete :destroy, params: params }
+
+      it 'returns 404 and fail to save' do
+        expect(json['error']).to eq("Couldn't find Stock with id: #{params[:id]}")
       end
     end
 
-    context "deleted record" do
-      let!(:stock_deleted){ create(:stock_deleted) }
+    context 'when deleted record' do
+      let(:params) { { id: 1 } }
+      let(:stock_deleted) { create(:stock_deleted) }
 
-      before { delete :destroy, params: { id: 1 }}
+      before { delete :destroy, params: params }
 
-      it "should return 404 and fail to save" do
-        expect(json["error"]).to eq("Couldn't find Stock with id: 1")
+      it 'returns 404 and fail to save' do
+        expect(json['error']).to eq("Couldn't find Stock with id: #{params[:id]}")
       end
     end
   end
 end
+

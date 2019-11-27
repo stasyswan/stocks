@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # == Schema Information
 #
 # Table name: bearers
@@ -9,6 +11,7 @@
 #
 
 class Bearer < ApplicationRecord
+
   has_many :stocks, dependent: :delete_all
   has_many :market_prices, through: :stocks
 
@@ -16,4 +19,6 @@ class Bearer < ApplicationRecord
             presence: true,
             uniqueness: true,
             length: { maximum: 255 }
+
 end
+

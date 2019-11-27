@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'simplecov'
 SimpleCov.start 'rails'
 
@@ -38,7 +40,6 @@ require 'support/database_cleaner'
 require 'factory_bot_rails'
 
 RSpec.configure do |config|
-
   config.include Requests::JsonHelpers, type: :controller
 
   # Remove this line if you're not using ActiveRecord or ActiveRecord fixtures
@@ -69,3 +70,4 @@ RSpec.configure do |config|
   # arbitrary gems may also be filtered via:
   # config.filter_gems_from_backtrace("gem name")
 end
+

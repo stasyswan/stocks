@@ -2,19 +2,18 @@
 
 require 'rails_helper'
 
-RSpec.describe Stock, type: :model do
+RSpec.describe Bearer, type: :model do
   describe 'associations' do
-    it { is_expected.to belong_to(:bearer) }
-    it { is_expected.to belong_to(:market_price) }
+    it { is_expected.to have_many(:stocks).dependent(:delete_all) }
+    it { is_expected.to have_many(:market_prices).through(:stocks) }
   end
 
   describe 'validations' do
-    subject { FactoryBot.create(:stock) }
+    subject { FactoryBot.create(:bearer) }
 
     it { is_expected.to validate_presence_of(:name) }
     it { is_expected.to validate_length_of(:name) }
     it { is_expected.to validate_uniqueness_of(:name) }
-    it { is_expected.not_to allow_value('invalid').for(:name) }
   end
 end
 
